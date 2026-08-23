@@ -99,7 +99,7 @@ export default function App() {
 
     try {
       // Fetch user recommendations
-      const recRes = await fetch(`${API_BASE_URL}/recommendations/${user.id}`);
+      const recRes = await fetch(`${API_BASE_URL}/recommendations?userId=${user.id}`);
       const recData = await recRes.json();
 
       if (recData.success) {
@@ -109,7 +109,7 @@ export default function App() {
       }
 
       // Fetch user skill synergies
-      const synRes = await fetch(`${API_BASE_URL}/synergy/${user.id}`);
+      const synRes = await fetch(`${API_BASE_URL}/synergy?userId=${user.id}`);
       const synData = await synRes.json();
       if (synData.success) {
         setSynergies(synData.synergies || []);
