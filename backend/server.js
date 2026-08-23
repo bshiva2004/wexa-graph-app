@@ -75,35 +75,33 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server & Check CognoDB Connectivity
-if (require.main === module) {
-  const server = app.listen(PORT, async () => {
-    console.log(`\n======================================================`);
-    console.log(`🌐 Server running at: http://localhost:${PORT}`);
-    console.log(`📡 Checking CognoDB Cloud Connectivity...`);
-    console.log(`======================================================`);
+const server = app.listen(PORT, async () => {
+  console.log(`\n======================================================`);
+  console.log(`🌐 Server running at: http://localhost:${PORT}`);
+  console.log(`📡 Checking CognoDB Cloud Connectivity...`);
+  console.log(`======================================================`);
 
-    const status = await verifyConnectivity();
-    if (status.connected) {
-      console.log(`🎉 Ready to serve graph recommendation queries!\n`);
-    } else {
-      console.warn(`\n⚠️  Database is offline or not yet configured in backend/.env`);
-      console.warn(`   Configure COGNODB_URI and COGNODB_PASSWORD, then run:`);
-      console.warn(`   npm run seed\n`);
-    }
+  const status = await verifyConnectivity();
+  if (status.connected) {
+    console.log(`🎉 Ready to serve graph recommendation queries!\n`);
+  } else {
+    console.warn(`\n⚠️  Database is offline or not yet configured in backend/.env`);
+    console.warn(`   Configure COGNODB_URI and COGNODB_PASSWORD, then run:`);
+    console.warn(`   npm run seed\n`);
+  }
+});
+
+// Graceful Shutdown Handler
+async function gracefulShutdown(signal) {
+  console.log(`\nReceived ${signal}. Shutting down gracefully...`);
+  server.close(async () => {
+    console.log('HTTP server closed.');
+    await closeDriver();
+    process.exit(0);
   });
-
-  // Graceful Shutdown Handler
-  const gracefulShutdown = async (signal) => {
-    console.log(`\nReceived ${signal}. Shutting down gracefully...`);
-    server.close(async () => {
-      console.log('HTTP server closed.');
-      await closeDriver();
-      process.exit(0);
-    });
-  };
-
-  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 }
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 module.exports = app;
