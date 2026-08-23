@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Play, Code, CheckCircle, AlertTriangle, Sparkles } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const PRESET_QUERIES = [
   {
@@ -39,7 +40,7 @@ export default function QueryPlayground() {
     setIsRunning(true);
     setError(null);
     try {
-      const response = await fetch('/api/playground', {
+      const response = await fetch(`${API_BASE_URL}/playground`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: customQuery }),

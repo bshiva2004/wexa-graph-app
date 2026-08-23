@@ -9,6 +9,7 @@ import CypherInspector from './components/CypherInspector';
 import QueryPlayground from './components/QueryPlayground';
 import { LoadingView, EmptyStateView, ErrorStateView } from './components/StateViews';
 import { Sparkles, Network, Briefcase, ChevronRight, Layers, Terminal } from 'lucide-react';
+import { API_BASE_URL } from './config';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('recommendations'); // 'recommendations' | 'graph' | 'cypher'
@@ -34,7 +35,7 @@ export default function App() {
 
     try {
       // 1. Health check
-      const healthRes = await fetch('/api/health');
+      const healthRes = await fetch(`${API_BASE_URL}/health`);
       const healthData = await healthRes.json();
       setConnectionStatus(healthData.database);
 
@@ -46,7 +47,7 @@ export default function App() {
       }
 
       // 2. Dashboard Aggregation
-      const url = userId ? `/api/dashboard?userId=${userId}` : '/api/dashboard';
+      const url = userId ? `${API_BASE_URL}/dashboard?userId=${userId}` : `${API_BASE_URL}/dashboard`;
       const dashRes = await fetch(url);
       const dashData = await dashRes.json();
 
@@ -80,7 +81,7 @@ export default function App() {
   // Fetch graph topology for canvas explorer
   const fetchGraphTopology = async () => {
     try {
-      const res = await fetch('/api/graph');
+      const res = await fetch(`${API_BASE_URL}/graph`);
       const data = await res.json();
       if (data.success) {
         setGraphData(data);
@@ -98,7 +99,7 @@ export default function App() {
 
     try {
       // Fetch user recommendations
-      const recRes = await fetch(`/api/recommendations/${user.id}`);
+      const recRes = await fetch(`${API_BASE_URL}/recommendations/${user.id}`);
       const recData = await recRes.json();
 
       if (recData.success) {
@@ -108,7 +109,7 @@ export default function App() {
       }
 
       // Fetch user skill synergies
-      const synRes = await fetch(`/api/synergy/${user.id}`);
+      const synRes = await fetch(`${API_BASE_URL}/synergy/${user.id}`);
       const synData = await synRes.json();
       if (synData.success) {
         setSynergies(synData.synergies || []);
