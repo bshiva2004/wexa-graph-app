@@ -1,0 +1,31 @@
+{
+  "name": "wexa-graph-backend",
+  "version": "1.0.0",
+  "description": "Graph-powered Talent & Opportunity Recommendation Network using CognoDB and Neo4j Driver",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node seed.js"
+  },
+  "keywords": [
+    "cognodb",
+    "neo4j",
+    "graph-database",
+    "opencypher",
+    "express",
+    "recommendation-engine"
+  ],
+  "author": "Wexa Candidate",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "neo4j-driver": "^5.23.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
+
