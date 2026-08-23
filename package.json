@@ -1,0 +1,21 @@
+{
+  "name": "wexa-graph-app",
+  "version": "1.0.0",
+  "description": "Graph-powered Talent & Opportunity Recommendation Network using CognoDB and Neo4j Driver",
+  "main": "backend/server.js",
+  "scripts": {
+    "build": "npm --prefix frontend install && npm --prefix frontend run build && npm --prefix backend install",
+    "start": "node backend/server.js",
+    "seed": "node backend/seed.js"
+  },
+  "keywords": [
+    "cognodb",
+    "neo4j",
+    "opencypher",
+    "graph-database",
+    "react",
+    "express"
+  ],
+  "author": "Shiva Kumar",
+  "license": "MIT"
+}

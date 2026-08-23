@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
+const fs = require('fs');
 const { verifyConnectivity, closeDriver, getConnectionStatus } = require('./config/db');
 const apiRoutes = require('./routes/api');
 
@@ -20,27 +22,42 @@ app.use(express.json());
 // API Routes
 app.use('/api', apiRoutes);
 
-// Root Welcome & Health Route
-app.get('/', (req, res) => {
-  const status = getConnectionStatus();
-  res.json({
-    message: '🚀 Wexa Graph Recommendation Network API is Running',
-    version: '1.0.0',
-    endpoints: [
-      'GET /api/health',
-      'GET /api/dashboard',
-      'GET /api/users',
-      'GET /api/recommendations/:userId',
-      'GET /api/synergy/:userId',
-      'GET /api/graph',
-      'GET /api/stats',
-      'POST /api/playground',
-    ],
-    cognoDB: status,
-  });
-});
+// Serve Frontend Static Assets if built
+const frontendDistPath = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(frontendDistPath)) {
+  console.log(`📦 Serving production frontend from: ${frontendDistPath}`);
+  app.use(express.static(frontendDistPath));
 
-// Global 404 Handler
+  // SPA fallback to index.html for non-API routes
+  app.get('*', (req, res, next) => {
+    if (req.originalUrl.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  });
+} else {
+  // API Welcome & Health Route when frontend is not pre-built in current directory
+  app.get('/', (req, res) => {
+    const status = getConnectionStatus();
+    res.json({
+      message: '🚀 Wexa Graph Recommendation Network API is Running',
+      version: '1.0.0',
+      endpoints: [
+        'GET /api/health',
+        'GET /api/dashboard',
+        'GET /api/users',
+        'GET /api/recommendations/:userId',
+        'GET /api/synergy/:userId',
+        'GET /api/graph',
+        'GET /api/stats',
+        'POST /api/playground',
+      ],
+      cognoDB: status,
+    });
+  });
+}
+
+// Global 404 Handler for undefined API routes
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -88,4 +105,3 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 module.exports = app;
-
